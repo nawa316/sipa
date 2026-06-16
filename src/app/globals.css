@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-playfair-display: "Playfair Display";
+  --font-dm-serif-text: "DM Serif Text";
+}
+
+/* Custom cursor - hide default cursor on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  body.hide-native-cursor * {
+    cursor: none !important;
+  }
+}
+
+.playfair_display {
+  font-family: var(--font-playfair-display);
+}
+
+.dm_serif_text {
+  font-family: var(--font-dm-serif-text);
+}
+
+.section_wrapper {
+  height: 100vh;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.section {
+  scroll-snap-align: start;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}

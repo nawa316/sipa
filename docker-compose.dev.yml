@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database (same as production)
+  db:
+    image: postgres:16-alpine
+    container_name: profile-web-db-dev
+    environment:
+      POSTGRES_DB: profile_web_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - profile-web-network
+
+  # Next.js Full Stack App (Development mode with hot reload)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps
+    container_name: profile-web-app-dev
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/profile_web_db
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - db
+    networks:
+      - profile-web-network
+
+networks:
+  profile-web-network:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+    driver: local
